@@ -8,7 +8,7 @@ RELEASE_ROOT = MB_API_ROOT + "release/?query="
 
 COVER_ART_API_URL = "http://coverartarchive.org/release"
 
-OWNER_URL = "https://github.com/andrewmichaud"
+OWNER_URL = "https://github.com/andrewmichaud/isthisska_bot"
 USER_AGENT = "isthisska_twitterbot/1.0" + OWNER_URL
 HEADERS = {"User-Agent": USER_AGENT}
 
