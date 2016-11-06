@@ -14,6 +14,8 @@ HEADERS = {"User-Agent": USER_AGENT}
 
 RELEASE_COUNT_DICT = {}
 
+ALBUM_ART_FILENAME = "album_art.jpg"
+
 
 def gen_dict(letter):
     """Generate count of releases in musicbrainz for letter search."""
@@ -77,7 +79,7 @@ def produce_random_album_art():
         data = resp.json()
         album_art_url = data["images"][0]["image"]
 
-        with open("album_art.jpg", "wb") as f:
+        with open(ALBUM_ART_FILENAME, "wb") as f:
             art_data = requests.get(album_art_url, headers=HEADERS)
             f.write(art_data.content)
 
