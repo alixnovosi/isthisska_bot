@@ -15,22 +15,19 @@ HEADERS = {"User-Agent": USER_AGENT}
 RELEASE_COUNT_DICT = {}
 
 
-def gen_dict():
-    """Generate dict of release counts per letter."""
-    letters = "abcdefghijklmnopqrstuvwxyz"
+def gen_dict(letter):
+    """Generate count of releases in musicbrainz for letter search."""
+    url = RELEASE_ROOT + "{}&limit=1".format(letter)
+    print("URL to get count: {}.".format(url))
+    resp = requests.get(url, headers=HEADERS)
 
-    for letter in letters:
-        url = RELEASE_ROOT + "{}&limit=1".format(letter)
-        print("URL to get count: {}.".format(url))
-        resp = requests.get(url, headers=HEADERS)
+    soup = BeautifulSoup(resp.text, "html.parser")
+    release_list = soup.find("release-list")
+    count = release_list.attrs["count"]
 
-        soup = BeautifulSoup(resp.text, "html.parser")
-        release_list = soup.find("release-list")
-        count = release_list.attrs["count"]
+    print("Got count {}.".format(count))
 
-        print("Got count {}.".format(count))
-
-        RELEASE_COUNT_DICT[letter] = count
+    RELEASE_COUNT_DICT[letter] = count
 
 
 def produce_random_album_art():
@@ -39,7 +36,10 @@ def produce_random_album_art():
     Save it as album_art.jpg
     """
     # Get a random album.
-    letter = random.choice(list(RELEASE_COUNT_DICT.keys()))
+    letter = random.choice("abcdefghijklmnopqrstuvwxyz")
+    if letter not in RELEASE_COUNT_DICT:
+        gen_dict(letter)
+
     count = RELEASE_COUNT_DICT[letter]
 
     # Try a few times - not all albums MusicBrainz lists has album art.
