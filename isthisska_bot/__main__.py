@@ -13,11 +13,11 @@ if __name__ == "__main__":
 
     with open("log", "w") as f:
         while True:
-            f.write("Grabbing random album art from Musicbrainz.")
+            f.write("Grabbing random album art from Musicbrainz\n.")
             f.flush()
             album_art_gen.produce_random_album_art()
 
-            f.write("Sending tweet with art.")
+            f.write("Sending tweet with art\n.")
             f.flush()
             api.update_with_media("album_art.jpg", status="Is this ska?")
 
