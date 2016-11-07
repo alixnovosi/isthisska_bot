@@ -31,7 +31,7 @@ if __name__ == "__main__":
                     # Image is too big to tweet. Shrink and retry.
                     f.write("Running shrink commands.\n")
                     f.flush()
-                    subproccess.run(["convert", ALBUM_ART_FILENAME, "-resize", "50%",
+                    subprocess.run(["convert", ALBUM_ART_FILENAME, "-resize", "50%",
                                      "smaller" + ALBUM_ART_FILENAME])
                     subprocess.run(["mv", "smaller" + ALBUM_ART_FILENAME, ALBUM_ART_FILENAME])
 
