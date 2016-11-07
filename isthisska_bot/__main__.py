@@ -1,10 +1,10 @@
 """Main class for bot."""
 
 import logging
-from logging import RotatingFileHandler
 import subprocess
 import sys
 import time
+from logging.handlers import RotatingFileHandler
 
 import album_art_gen
 import send
