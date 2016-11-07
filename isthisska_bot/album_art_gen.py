@@ -1,3 +1,4 @@
+import logging
 import random
 
 import requests
@@ -16,18 +17,20 @@ RELEASE_COUNT_DICT = {}
 
 ALBUM_ART_FILENAME = "album_art.jpg"
 
+LOG = logging.getLogger("root")
+
 
 def gen_dict(letter):
     """Generate count of releases in musicbrainz for letter search."""
     url = RELEASE_ROOT + "{}&limit=1".format(letter)
-    print("URL to get count: {}.".format(url))
+    LOG.debug("URL to get count: {}.".format(url))
     resp = requests.get(url, headers=HEADERS)
 
     soup = BeautifulSoup(resp.text, "html.parser")
     release_list = soup.find("release-list")
     count = release_list.attrs["count"]
 
-    print("Got count {}.".format(count))
+    LOG.debug("Got count {}.".format(count))
 
     RELEASE_COUNT_DICT[letter] = count
 
@@ -50,29 +53,29 @@ def produce_random_album_art():
         # Choose a random index into the releases.
         offset = random.choice(range(int(count) - 1))
         url = "{}{}&limit=1&offset={}".format(RELEASE_ROOT, letter, offset)
-        print("URL to get a random release: {}.".format(url))
+        LOG.debug("URL to get a random release: {}.".format(url))
         resp = requests.get(url, headers=HEADERS)
         if resp.status_code != 200:
-            print("Status not 200 - it's {}. Exiting.".format(resp.status_code))
+            LOG.error("Status not 200 - it's {}. Exiting.".format(resp.status_code))
             return
 
         # who needs error handling.
         # Get release MBID to pull up the album art.
         soup = BeautifulSoup(resp.text, "html.parser")
         release = soup.find("release")
-        print("Release: {}".format(release))
+        LOG.debug("Release: {}".format(release))
 
         id = release.attrs["id"]
-        print("Got release id {}.".format(id))
+        LOG.info("Got release id {}.".format(id))
 
         # Get an image - at last!
         # Hit coverartarchive API to get the actual art.
         url = "{}/{}".format(COVER_ART_API_URL, id)
-        print(url)
+        LOG.debug("Cover art API url: {}".format(url))
         resp = requests.get(url, headers=HEADERS)
 
         if resp.status_code == 404:
-            print("Got 404!")
+            LOG.error("Got 404 trying to get album art!")
             continue
 
         # this doesn't seem fragile at all.
