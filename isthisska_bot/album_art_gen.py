@@ -10,7 +10,7 @@ RELEASE_ROOT = MB_API_ROOT + "release/?query="
 COVER_ART_API_URL = "http://coverartarchive.org/release"
 
 OWNER_URL = "https://github.com/andrewmichaud/isthisska_bot"
-USER_AGENT = "isthisska_twitterbot/1.0" + OWNER_URL
+USER_AGENT = "isthisska_twitterbot/1.0 (" + OWNER_URL + ") (bots+isthisska@mail.andrewmichaud.com)"
 HEADERS = {"User-Agent": USER_AGENT}
 
 RELEASE_COUNT_DICT = {}
@@ -48,16 +48,20 @@ def produce_random_album_art():
     count = RELEASE_COUNT_DICT[letter]
 
     # Try a few times - not all albums MusicBrainz lists has album art.
-    for i in range(15):
+    for i in range(1):
 
         # Choose a random index into the releases.
         offset = random.choice(range(int(count) - 1))
         url = "{}{}&limit=1&offset={}".format(RELEASE_ROOT, letter, offset)
         LOG.debug("URL to get a random release: {}.".format(url))
         resp = requests.get(url, headers=HEADERS)
-        if resp.status_code != 200:
-            LOG.error("Status not 200 - it's {}. Exiting.".format(resp.status_code))
-            return
+        if resp.status_code == 503:
+            LOG.critical("rate limited! STOP!")
+            raise Exception
+
+        elif resp.status_code != 200:
+            LOG.critcal("Unhandled error - code {}. Exiting.".format(resp.status_code))
+            raise Exception
 
         # who needs error handling.
         # Get release MBID to pull up the album art.
