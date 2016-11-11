@@ -27,6 +27,10 @@ if __name__ == "__main__":
         except album_art_gen.APIException as e:
             LOG.error("Encountered an API Exception.")
             LOG.error("Code: %s Message: %s", e.code, e.message)
+
+            if e.code == 503:
+                LOG.error("API error or rate limiting - waiting at least a few minutes.")
+                time.sleep(300)
             LOG.error("Restarting from the beginning.")
             continue
 
