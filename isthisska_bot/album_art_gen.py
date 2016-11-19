@@ -93,6 +93,9 @@ def gen_dict(letter):
     soup = BeautifulSoup(resp.text, "html.parser")
 
     release_list = soup.find("release-list")
+    if release_list is None:
+        raise APIException("Couldn't find release!")
+
     count = release_list.attrs["count"]
 
     LOG.debug("Got count {}.".format(count))
