@@ -10,7 +10,7 @@ import send
 import util
 
 # Delay between tweets in seconds.
-DELAY = 3600
+DELAY = 1800 # half hour
 ALBUM_ART_FILENAME = album_art_gen.ALBUM_ART_FILENAME
 TWEET_TEXT = "Is this ska?\n(MB Release: https://musicbrainz.org/release/{})"
 

@@ -64,6 +64,9 @@ def produce_random_album_art():
         release = soup.find("release")
         LOG.debug("Release: {}".format(release))
 
+        if release is None:
+            raise APIException("Couldn't find release!")
+
         release_id = release.attrs["id"]
         LOG.info("Got release id {}.".format(release_id))
 
@@ -93,6 +96,9 @@ def gen_dict(letter):
     soup = BeautifulSoup(resp.text, "html.parser")
 
     release_list = soup.find("release-list")
+    if release_list is None:
+        raise APIException("Couldn't find release!")
+
     count = release_list.attrs["count"]
 
     LOG.debug("Got count {}.".format(count))
@@ -151,7 +157,9 @@ def mb_query(url, headers=HEADERS):
 
 # Other stuff.
 class APIException(Exception):
-    def __init__(self, message, code):
+    def __init__(self, message, code=None):
         super(APIException, self).__init__(message)
+
+        self.message = message
 
         self.code = code
