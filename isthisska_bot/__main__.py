@@ -12,7 +12,7 @@ import util
 # Delay between tweets in seconds.
 DELAY = 3600
 ALBUM_ART_FILENAME = album_art_gen.ALBUM_ART_FILENAME
-TWEET_TEXT = "Is this ska?"
+TWEET_TEXT = "Is this ska?\n(MB Release: https://musicbrainz.org/release/{})"
 
 if __name__ == "__main__":
     api = send.auth_and_get_api()
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     while True:
         LOG.info("Grabbing random album art from Musicbrainz.")
         try:
-            album_art_gen.produce_random_album_art()
+            id = album_art_gen.produce_random_album_art()
 
         except album_art_gen.APIException as e:
             LOG.error("Encountered an API Exception.")
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         LOG.info("Sending tweet with art.")
 
         try:
-            api.update_with_media(ALBUM_ART_FILENAME, status=TWEET_TEXT)
+            api.update_with_media(ALBUM_ART_FILENAME, status=TWEET_TEXT.format(id))
 
         except tweepy.TweepError as e:
             if hasattr(e, "reason") and "File is too big" in e.reason:

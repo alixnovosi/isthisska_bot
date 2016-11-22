@@ -32,6 +32,7 @@ def produce_random_album_art():
     """
     Retrieve a random piece of album art from MusicBrainz/Album Art Archive.
     Save it as album_art.jpg
+    Return release id of album we found.
     """
     # Get a random album.
     letter = random.choice("abcdefghijklmnopqrstuvwxyz")
@@ -82,6 +83,8 @@ def produce_random_album_art():
             f.write(art_data.content)
 
         break
+
+    return release_id
 
 
 def gen_dict(letter):
