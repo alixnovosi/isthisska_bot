@@ -13,7 +13,7 @@ setup(author="Andrew Michaud",
           "console_scripts": ["isthisska_bot = isthisska_bot.__main__:main"]
       },
 
-      install_requires=["tweepy>=3.5", "bs4"],
+      install_requires=["botskeleton>1.0.4", "bs4", "tweepy>=3.5"],
 
       license="BSD3",
 
