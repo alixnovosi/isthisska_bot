@@ -1,15 +1,14 @@
 import logging
 import random
 
+import botskeleton
 import requests
 from bs4 import BeautifulSoup
-
-import util
 
 
 # CONSTANTS related to the APIs we need to use.
 MB_API_ROOT = "https://musicbrainz.org/ws/2/"
-RELEASE_ROOT = MB_API_ROOT + "release/?query="
+RELEASE_ROOT = f"{MB_API_ROOT}release/?query="
 
 COVER_ART_API_URL = "https://coverartarchive.org/release"
 
@@ -18,7 +17,7 @@ MB_RATE_LIMIT = 1800
 
 # Being a good citizen - produce a useful user_agent.
 OWNER_URL = "https://github.com/andrewmichaud/isthisska_bot"
-USER_AGENT = "isthisska_twitterbot/1.0 (" + OWNER_URL + ") (bots+isthisska@mail.andrewmichaud.com)"
+USER_AGENT = f"isthisska_twitterbot/1.0 ({OWNER_URL}) (bots+isthisska@mail.andrewmichaud.com)"
 HEADERS = {"User-Agent": USER_AGENT}
 
 # For caching(ish) results from MusicBrainz, and storing our eventual output image.
@@ -52,7 +51,7 @@ def produce_random_album_art():
             raise APIException(msg, resp.status_code)
 
         elif resp.status_code != 200:
-            msg = "Unhandled error - code {}. Exiting.".format(resp.status_code)
+            msg = f"Unhandled error - code {resp.status_code}. Exiting."
             LOG.error(msg)
             raise APIException(msg, resp.status_code)
 
@@ -62,13 +61,13 @@ def produce_random_album_art():
         # Get release MBID to pull up the album art.
         soup = BeautifulSoup(resp.text, "html.parser")
         release = soup.find("release")
-        LOG.debug("Release: {}".format(release))
+        LOG.debug(f"Release: {release}")
 
         if release is None:
             raise APIException("Couldn't find release!")
 
         release_id = release.attrs["id"]
-        LOG.info("Got release id {}.".format(release_id))
+        LOG.info(f"Got release id {release_id}.")
 
         # Get an image - at last!
 
@@ -101,7 +100,7 @@ def gen_dict(letter):
 
     count = release_list.attrs["count"]
 
-    LOG.debug("Got count {}.".format(count))
+    LOG.debug(f"Got count {count}.")
 
     RELEASE_COUNT_DICT[letter] = count
 
@@ -116,8 +115,8 @@ def get_image(url):
 def perform_album_art_search(release_id):
     """Get an actual piece of album art."""
     # Hit coverartarchive API to get the actual art.
-    url = "{}/{}".format(COVER_ART_API_URL, release_id)
-    LOG.debug("Cover art API url: {}".format(url))
+    url = f"{COVER_ART_API_URL}/{release_id}"
+    LOG.debug(f"Cover art API url: {url}")
     return cover_art_archive_query(url)
 
 
@@ -128,28 +127,28 @@ def perform_random_release_search(letter, count):
     """
     # Choose a random index into the releases.
     offset = random.choice(range(int(count) - 1))
-    url = "{}{}&limit=1&offset={}".format(RELEASE_ROOT, letter, offset)
-    LOG.debug("URL to get a random release: {}.".format(url))
+    url = f"{RELEASE_ROOT}{letter}&limit=1&offset={offset}"
+    LOG.debug(f"URL to get a random release: {url}.")
     return mb_query(url)
 
 
 def perform_letter_search(letter):
     """Get results of search for a letter from MusicBrainz API."""
-    url = RELEASE_ROOT + "{}&limit=1".format(letter)
-    LOG.debug("URL to get count: {}.".format(url))
+    url = f"{RELEASE_ROOT}{letter}&limit=1"
+    LOG.debug("URL to get count: {url}.")
     return mb_query(url)
 
 
 # Rate-limited functions to do the actual hitting.
 # There's no rate limit on the Cover Art Archive, but be nice and stay at or below 2 requests a
 # second.
-@util.rate_limited(MB_RATE_LIMIT)
+@botskeleton.rate_limited(MB_RATE_LIMIT)
 def cover_art_archive_query(url, headers=HEADERS):
     """Perform rate-limited query against Cover Art Archive API."""
     return requests.get(url, headers=HEADERS)
 
 
-@util.rate_limited(MB_RATE_LIMIT)
+@botskeleton.rate_limited(MB_RATE_LIMIT)
 def mb_query(url, headers=HEADERS):
     """Perform rate-limited query against MusicBrainz API."""
     return requests.get(url, headers=headers)
