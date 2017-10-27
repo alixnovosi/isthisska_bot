@@ -1,4 +1,5 @@
 import logging
+import os
 import random
 
 import botskeleton
@@ -23,6 +24,8 @@ HEADERS = {"User-Agent": USER_AGENT}
 # For caching(ish) results from MusicBrainz, and storing our eventual output image.
 RELEASE_COUNT_DICT = {}
 ALBUM_ART_FILENAME = "album_art.jpg"
+HERE = os.path.abspath(os.path.dirname(__file__))
+ALBUM_ART_PATH = os.path.join(HERE, ALBUM_ART_FILENAME)
 
 LOG = logging.getLogger("root")
 
@@ -80,7 +83,7 @@ def produce_random_album_art():
         data = resp.json()
         album_art_url = data["images"][0]["image"]
 
-        with open(ALBUM_ART_FILENAME, "wb") as f:
+        with open(ALBUM_ART_PATH, "wb") as f:
             art_data = get_image(album_art_url)
             f.write(art_data.content)
 

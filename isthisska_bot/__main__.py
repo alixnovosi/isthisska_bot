@@ -11,8 +11,10 @@ import album_art_gen
 
 # Delay between tweets in seconds.
 DELAY = 1800 # half hour
+
 ALBUM_ART_FILENAME = album_art_gen.ALBUM_ART_FILENAME
 TWEET_TEXT = "Is this ska?\n(MB Release: https://musicbrainz.org/release/{})"
+MAX_IMAGE_SIZE_BYTES = 3072 * 1024
 
 if __name__ == "__main__":
     SECRETS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "SECRETS")
@@ -37,26 +39,20 @@ if __name__ == "__main__":
 
         LOG.info("Sending tweet with art.")
 
-        try:
-            api.send_with_one_media(TWEET_TEXT.format(id), ALBUM_ART_FILENAME)
+        LOG.info(f"Check size of file (must be <{MAX_IMAGE_SIZE_BYTES} to send)")
+        file_size = os.path.getsize(album_art_gen.ALBUM_ART_PATH)
+        LOG.info(f"Size of {album_art_gen.ALBUM_ART_PATH} is {file_size}")
+        if file_size >= MAX_IMAGE_SIZE_BYTES:
+            LOG.info("Too big, shrinking.")
+            LOG.info("Running shrink commands.")
+            subprocess.run(["convert", album_art_gen.ALBUM_ART_PATH, "-resize", "50%",
+                            "smaller" + ALBUM_ART_FILENAME])
+            subprocess.run(["mv", "smaller" + ALBUM_ART_FILENAME, album_art_gen.ALBUM_ART_PATH])
 
-        except tweepy.TweepError as e:
-            if hasattr(e, "reason") and "File is too big" in e.reason:
-                # Image is too big to tweet. Shrink and retry.
-                LOG.info("Running shrink commands.")
-                subprocess.run(["convert", ALBUM_ART_FILENAME, "-resize", "50%",
-                                "smaller" + ALBUM_ART_FILENAME])
-                subprocess.run(["mv", "smaller" + ALBUM_ART_FILENAME, ALBUM_ART_FILENAME])
+            LOG.info("Retrying tweet.")
 
-                LOG.info("Retrying tweet.")
-
-                api.send_with_one_media(ALBUM_ART_FILENAME, status=TWEET_TEXT)
-
-            else:
-                LOG.critical("A Tweepy error we don't know how to handle happened.")
-                LOG.critical(f"Error reason: {e.reason}")
-                LOG.critical("Exiting.")
-                break
+        LOG.info("Sending out album art.")
+        api.send_with_one_media(TWEET_TEXT.format(id), album_art_gen.ALBUM_ART_PATH)
 
         LOG.info(f"Sleeping for {DELAY} seconds.")
         time.sleep(DELAY)
