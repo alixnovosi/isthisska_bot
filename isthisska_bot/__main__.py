@@ -10,7 +10,7 @@ import tweepy
 import album_art_gen
 
 # Delay between tweets in seconds.
-DELAY = 1800 # half hour
+DELAY = 3600
 
 ALBUM_ART_FILENAME = album_art_gen.ALBUM_ART_FILENAME
 TWEET_TEXT = "Is this ska?\n(MB Release: https://musicbrainz.org/release/{})"
@@ -18,7 +18,7 @@ MAX_IMAGE_SIZE_BYTES = 3072 * 1024
 
 if __name__ == "__main__":
     SECRETS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "SECRETS")
-    api = botskeleton.BotSkeleton(SECRETS_DIR, bot_name="isthisska_bot")
+    BOT_SKELETON = botskeleton.BotSkeleton(SECRETS_DIR, bot_name="isthisska_bot", delay=DELAY)
 
     LOG = botskeleton.set_up_logging()
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
             LOG.info("Retrying tweet.")
 
         LOG.info("Sending out album art.")
-        api.send_with_one_media(TWEET_TEXT.format(id), album_art_gen.ALBUM_ART_PATH)
+        BOT_SKELETON.send_with_one_media(TWEET_TEXT.format(id), album_art_gen.ALBUM_ART_PATH)
 
-        LOG.info(f"Sleeping for {DELAY} seconds.")
-        time.sleep(DELAY)
+        BOT_SKELETON.nap()
+

@@ -2,6 +2,7 @@ import logging
 import os
 import random
 
+import backoff
 import botskeleton
 import requests
 from bs4 import BeautifulSoup
@@ -14,7 +15,10 @@ RELEASE_ROOT = f"{MB_API_ROOT}release/?query="
 COVER_ART_API_URL = "https://coverartarchive.org/release"
 
 # Hits per hour.
+CAA_RATE_LIMIT = 1800
 MB_RATE_LIMIT = 1800
+
+# Retries for CAA/MB before giving up.
 
 # Being a good citizen - produce a useful user_agent.
 OWNER_URL = "https://github.com/andrewmichaud/isthisska_bot"
@@ -145,12 +149,18 @@ def perform_letter_search(letter):
 # Rate-limited functions to do the actual hitting.
 # There's no rate limit on the Cover Art Archive, but be nice and stay at or below 2 requests a
 # second.
-@botskeleton.rate_limited(MB_RATE_LIMIT)
+@backoff.on_exception(backoff.expo,
+                      requests.exceptions.Timeout,
+                      max_tries=5)
+@botskeleton.rate_limited(CAA_RATE_LIMIT)
 def cover_art_archive_query(url, headers=HEADERS):
     """Perform rate-limited query against Cover Art Archive API."""
     return requests.get(url, headers=HEADERS)
 
 
+@backoff.on_exception(backoff.expo,
+                      requests.exceptions.Timeout,
+                      max_tries=5)
 @botskeleton.rate_limited(MB_RATE_LIMIT)
 def mb_query(url, headers=HEADERS):
     """Perform rate-limited query against MusicBrainz API."""
