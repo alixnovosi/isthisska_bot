@@ -1,11 +1,11 @@
 """Main class for bot."""
 
 import os
-import subprocess
 import time
 
 import botskeleton
 import tweepy
+from PIL import Image
 
 import album_art_gen
 
@@ -44,10 +44,9 @@ if __name__ == "__main__":
         LOG.info(f"Size of {album_art_gen.ALBUM_ART_PATH} is {file_size}")
         if file_size >= MAX_IMAGE_SIZE_BYTES:
             LOG.info("Too big, shrinking.")
-            LOG.info("Running shrink commands.")
-            subprocess.run(["convert", album_art_gen.ALBUM_ART_PATH, "-resize", "50%",
-                            "smaller" + ALBUM_ART_FILENAME])
-            subprocess.run(["mv", "smaller" + ALBUM_ART_FILENAME, album_art_gen.ALBUM_ART_PATH])
+            im = Image.open(album_art_gen.ALBUM_ART_PATH)
+            im.resize((im.width//2, im.height//2), Image.ANTIALIAS)
+            im.save(album_art_gen.ALBUM_ART_PATH)
 
             LOG.info("Retrying tweet.")
 

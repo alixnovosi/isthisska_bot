@@ -13,7 +13,7 @@ setup(author="Andrew Michaud",
           "console_scripts": ["isthisska_bot = isthisska_bot.__main__:main"]
       },
 
-      install_requires=["backoff>=1.3.1", "botskeleton>=1.2.2", "bs4", "tweepy>=3.5"],
+      install_requires=["backoff>=1.3.1", "botskeleton>=1.2.2", "bs4", "tweepy>=3.5", "Pillow"],
       python_requires=">=3.6",
 
       license="BSD3",
