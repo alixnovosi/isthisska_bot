@@ -27,7 +27,7 @@ HEADERS = {"User-Agent": USER_AGENT}
 
 # For caching(ish) results from MusicBrainz, and storing our eventual output image.
 RELEASE_COUNT_DICT = {}
-ALBUM_ART_FILENAME = "album_art.jpg"
+ALBUM_ART_FILENAME = "album_art.png"
 HERE = os.path.abspath(os.path.dirname(__file__))
 ALBUM_ART_PATH = os.path.join(HERE, ALBUM_ART_FILENAME)
 
@@ -37,7 +37,7 @@ LOG = logging.getLogger("root")
 def produce_random_album_art():
     """
     Retrieve a random piece of album art from MusicBrainz/Album Art Archive.
-    Save it as album_art.jpg
+    Save it as album_art.png
     Return release id of album we found.
     """
     # Get a random album.
