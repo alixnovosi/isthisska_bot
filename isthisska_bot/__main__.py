@@ -41,11 +41,13 @@ if __name__ == "__main__":
         LOG.info(f"Check size of file (must be <{MAX_IMAGE_SIZE_BYTES} to send)")
         file_size = os.path.getsize(album_art_gen.ALBUM_ART_PATH)
         LOG.info(f"Size of {album_art_gen.ALBUM_ART_PATH} is {file_size}")
-        if file_size >= MAX_IMAGE_SIZE_BYTES:
+        while file_size >= MAX_IMAGE_SIZE_BYTES:
             LOG.info("Too big, shrinking.")
             im = Image.open(album_art_gen.ALBUM_ART_PATH)
             im.resize((im.width//2, im.height//2), Image.ANTIALIAS)
             im.save(album_art_gen.ALBUM_ART_PATH)
+
+            file_size = os.path.getsize(album_art_gen.ALBUM_ART_PATH)
 
             LOG.info("Retrying tweet.")
 
