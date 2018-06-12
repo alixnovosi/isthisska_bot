@@ -30,6 +30,7 @@ RELEASE_COUNT_DICT = {}
 ALBUM_ART_FILENAME = "album_art.png"
 HERE = os.path.abspath(os.path.dirname(__file__))
 ALBUM_ART_PATH = os.path.join(HERE, ALBUM_ART_FILENAME)
+ALBUM_ART_TMP_PATH = os.path.join(HERE, "TMP_" + ALBUM_ART_FILENAME)
 
 LOG = logging.getLogger("root")
 

@@ -42,12 +42,18 @@ if __name__ == "__main__":
         file_size = os.path.getsize(album_art_gen.ALBUM_ART_PATH)
         LOG.info(f"Size of {album_art_gen.ALBUM_ART_PATH} is {file_size}")
         while file_size >= MAX_IMAGE_SIZE_BYTES:
-            LOG.info("Too big, shrinking.")
+            LOG.info(f"Size is {file_size}, bigger than {MAX_IMAGE_SIZE_BYTES}."
+                     "Resizing, retrying.")
             im = Image.open(album_art_gen.ALBUM_ART_PATH)
             im.resize((im.width//2, im.height//2), Image.ANTIALIAS)
+
+            # Save to tmp file, flip.
+            im.save(album_art_gen.ALBUM_ART_TMP_PATH)
+            im = Image.open(album_art_gen.ALBUM_ART_TMP_PATH)
             im.save(album_art_gen.ALBUM_ART_PATH)
 
             file_size = os.path.getsize(album_art_gen.ALBUM_ART_PATH)
+            LOG.info(f"Size after save, before loop restart, is {file_size}")
 
             LOG.info("Retrying tweet.")
 
