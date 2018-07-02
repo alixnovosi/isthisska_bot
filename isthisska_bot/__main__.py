@@ -45,11 +45,8 @@ if __name__ == "__main__":
             LOG.info(f"Size is {file_size}, bigger than {MAX_IMAGE_SIZE_BYTES}."
                      "Resizing, retrying.")
             im = Image.open(album_art_gen.ALBUM_ART_PATH)
-            im.resize((im.width//2, im.height//2), Image.ANTIALIAS)
+            im = im.resize((im.width//2, im.height//2), Image.ANTIALIAS)
 
-            # Save to tmp file, flip.
-            im.save(album_art_gen.ALBUM_ART_TMP_PATH)
-            im = Image.open(album_art_gen.ALBUM_ART_TMP_PATH)
             im.save(album_art_gen.ALBUM_ART_PATH)
 
             file_size = os.path.getsize(album_art_gen.ALBUM_ART_PATH)
