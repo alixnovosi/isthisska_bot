@@ -29,6 +29,11 @@ ALBUM_ART_FILENAME = "album_art.png"
 HERE = os.path.abspath(os.path.dirname(__file__))
 ALBUM_ART_PATH = os.path.join(HERE, ALBUM_ART_FILENAME)
 
+# For blacklisting some albums.
+BLACKLIST_FILENAME = "blacklist.txt"
+SECRETS = os.path.join(HERE, "SECRETS")
+BLACKLIST_PATH = os.path.join(SECRETS, BLACKLIST_FILENAME)
+
 LOG = logging.getLogger("root")
 
 
@@ -73,6 +78,14 @@ def produce_random_album_art():
 
         release_id = release.attrs["id"]
         LOG.info(f"Got release id {release_id}.")
+
+        # See if release is blacklisted, if so skip.
+        try:
+            if release_id in open(BLACKLIST_PATH).read():
+                LOG.error(f"Release {release_id} is blacklisted.")
+                continue
+        except FileNotFoundError:
+            pass
 
         # Get an image - at last!
 
