@@ -13,7 +13,7 @@ setup(author="Andrew Michaud",
           "console_scripts": ["isthisska_bot = isthisska_bot.__main__:main"]
       },
 
-      install_requires=["backoff>=1.3.1", "botskeleton>=2.1.3", "bs4", "tweepy>=3.5", "Pillow"],
+      install_requires=["backoff>=1.8.0", "botskeleton>=3.1.0", "bs4", "Pillow"],
       python_requires=">=3.6",
 
       license="BSD3",
@@ -23,6 +23,6 @@ setup(author="Andrew Michaud",
       packages=find_packages(),
 
       # Project"s main homepage
-      url="https://github.com/andrewmichaud/isthisska_bot",
+      url="https://github.com/alixnovosi/isthisska_bot",
 
       version=VERSION)
