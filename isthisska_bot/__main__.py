@@ -4,7 +4,6 @@ import os
 import time
 
 import botskeleton
-import tweepy
 from PIL import Image
 
 import album_art_gen

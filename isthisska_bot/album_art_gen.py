@@ -18,8 +18,6 @@ COVER_ART_API_URL = "https://coverartarchive.org/release"
 CAA_RATE_LIMIT = 1800
 MB_RATE_LIMIT = 1800
 
-# Retries for CAA/MB before giving up.
-
 # Being a good citizen - produce a useful user_agent.
 OWNER_URL = "https://github.com/andrewmichaud/isthisska_bot"
 USER_AGENT = f"isthisska_twitterbot/1.0 ({OWNER_URL}) (bots+isthisska@mail.andrewmichaud.com)"

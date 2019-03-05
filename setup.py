@@ -22,7 +22,6 @@ setup(author="Andrew Michaud",
 
       packages=find_packages(),
 
-      # Project"s main homepage
       url="https://github.com/alixnovosi/isthisska_bot",
 
       version=VERSION)
