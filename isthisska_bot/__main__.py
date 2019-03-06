@@ -12,7 +12,6 @@ import album_art_gen
 DELAY = 3600
 
 ALBUM_ART_FILENAME = album_art_gen.ALBUM_ART_FILENAME
-TWEET_TEXT = "Is this ska?\n(MB Release: https://musicbrainz.org/release/{})"
 MAX_IMAGE_SIZE_BYTES = 3072 * 1024
 
 if __name__ == "__main__":
@@ -23,7 +22,7 @@ if __name__ == "__main__":
     while True:
         LOG.info("Grabbing random album art from Musicbrainz.")
         try:
-            id = album_art_gen.produce_random_album_art()
+            info = album_art_gen.produce_random_album_art()
 
         except album_art_gen.APIException as e:
             LOG.error("Encountered an API Exception.")
@@ -54,7 +53,14 @@ if __name__ == "__main__":
             LOG.info("Retrying tweet.")
 
         LOG.info("Sending out album art.")
-        BOT_SKELETON.send_with_one_media(TWEET_TEXT.format(id), album_art_gen.ALBUM_ART_PATH)
+        BOT_SKELETON.send_with_one_media(
+            (
+                f"Is {info['album']} by {info['artist']} ska?"
+                f"\n(MB Release: https://musicbrainz.org/release/{info['release_id']})"
+            ),
+            album_art_gen.ALBUM_ART_PATH,
+            f"Cover art for the album {info['album']} by the artist {info['artist']}"
+        )
 
         BOT_SKELETON.nap()
 

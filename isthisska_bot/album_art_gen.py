@@ -87,14 +87,26 @@ def produce_random_album_art():
         except FileNotFoundError:
             pass
 
-        # Get an image - at last!
+        # for caption and message text.
+        release_group = soup.find("release-group")
+        album = "unknown"
+        if release_group is not None:
+            album = "".join(release_group.find("title").contents)
 
+        artist_info = soup.find("artist")
+        artist = "unknown"
+        if artist_info is not None:
+            artist = "".join(artist_info.find("name").contents)
+
+        LOG.debug(f"Artist '{artist}' and album '{album}'")
+
+        # Get an image - at last!
         resp = perform_album_art_search(release_id)
         if resp.status_code == 404:
             LOG.error("Got 404 trying to get album art!")
             continue
 
-        # this doesn't seem fragile at all.
+        # TODO this doesn't seem fragile at all.
         data = resp.json()
         album_art_url = data["images"][0]["image"]
 
@@ -104,7 +116,7 @@ def produce_random_album_art():
 
         break
 
-    return release_id
+    return {"release_id": release_id, "artist": artist, "album": album}
 
 
 def gen_dict(letter):
